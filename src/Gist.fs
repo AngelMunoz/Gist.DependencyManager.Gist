@@ -39,16 +39,13 @@ type GistContents =
 module Gist =
 
     [<Literal>]
-    let User_Agent =
-        "Gist.DependencyManager.Gist.Github"
+    let User_Agent = "Gist.DependencyManager.Gist.Github"
 
     [<Literal>]
-    let Gist_Api_Url =
-        "https://api.github.com/gists"
+    let Gist_Api_Url = "https://api.github.com/gists"
 
 
-    let GistCache =
-        lazy ConcurrentDictionary<string, GistInfo>()
+    let GistCache = lazy ConcurrentDictionary<string, GistInfo>()
 
 
     let fetchGist (key: string) (token: string option) =
@@ -68,10 +65,7 @@ module Gist =
                     AuthorizationBearer token
                 }
 
-        ctx
-        |> Request.send
-        |> Response.assertOk
-        |> Response.deserializeJson<GistInfo>
+        ctx |> Request.send |> Response.assertOk |> Response.deserializeJson<GistInfo>
 
     let fetchGistFile (url: string) (token: string option) =
         let ctx =
@@ -88,10 +82,7 @@ module Gist =
                     AuthorizationBearer token
                 }
 
-        ctx
-        |> Request.send
-        |> Response.assertOk
-        |> Response.toText
+        ctx |> Request.send |> Response.assertOk |> Response.toText
 
 type Github =
 
@@ -137,7 +128,11 @@ type Github =
             | code -> Error(GithubError code)
         | ex -> Error(SerializationError ex.Message)
 
-    static member fetchAllGistFiles(gist: GistInfo, ?token: string) : GistInfo * (GistFile * string) array * FetchGistError array =
+    static member fetchAllGistFiles
+        (
+            gist: GistInfo,
+            ?token: string
+        ) : GistInfo * (GistFile * string) array * FetchGistError array =
         let ops =
             gist.files
             |> Map.toList
@@ -175,8 +170,7 @@ type Github =
         gist, results |> Seq.toArray, errors |> Seq.toArray
 
 module Github =
-    let GistIdRegex =
-        Regex(@"^[0-9A-Fa-f]{32,}$")
+    let GistIdRegex = Regex(@"^[0-9A-Fa-f]{32,}$")
 
     let (|IsGistId|NotGistId|) (value: string) =
         let trimmed = value.Trim()
@@ -187,28 +181,16 @@ module Github =
             NotGistId
 
     let getRevision (line: string) =
-        if
-            not (
-                line.StartsWith("revision=")
-                || line.StartsWith("Revision=")
-            )
-        then
+        if not (line.StartsWith("revision=") || line.StartsWith("Revision=")) then
             None
         else
             line.Substring(9).Trim() |> Some
 
     let getFiles (line: string) =
-        if
-            not (
-                line.StartsWith("files=")
-                || line.StartsWith("Files=")
-            )
-        then
+        if not (line.StartsWith("files=") || line.StartsWith("Files=")) then
             None
         else
-            line.Substring(6).Trim().Split(";")
-            |> Array.map (fun s -> s.Trim())
-            |> Some
+            line.Substring(6).Trim().Split(";") |> Array.map (fun s -> s.Trim()) |> Some
 
     let getGhToken (line: string) =
         if
@@ -232,10 +214,8 @@ module Github =
         let gistId = split |> Array.tryPick getId
         let files = split |> Array.tryPick getFiles
 
-        let token =
-            split |> Array.tryPick getGhToken
+        let token = split |> Array.tryPick getGhToken
 
-        let revision =
-            split |> Array.tryPick getRevision
+        let revision = split |> Array.tryPick getRevision
 
         (gistId, revision, files, token)

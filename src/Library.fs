@@ -7,9 +7,7 @@ open Gist.DependencyManager.Gist.Github
 module Attributes =
     /// A marker attribute to tell FCS that this assembly contains a Dependency Manager, or
     /// that a class with the attribute is a DependencyManager
-    [<AttributeUsage(AttributeTargets.Assembly
-                     ||| AttributeTargets.Class,
-                     AllowMultiple = false)>]
+    [<AttributeUsage(AttributeTargets.Assembly ||| AttributeTargets.Class, AllowMultiple = false)>]
     type DependencyManagerAttribute() =
         inherit Attribute()
 
@@ -17,11 +15,9 @@ module Attributes =
     do ()
 
 module Logger =
-    let private stdout =
-        lazy ResizeArray<string>()
+    let private stdout = lazy ResizeArray<string>()
 
-    let private stderr =
-        lazy ResizeArray<string>()
+    let private stderr = lazy ResizeArray<string>()
 
     let log msg = stdout.Value.Add(msg)
     let error msg = stderr.Value.Add(msg)
@@ -86,8 +82,7 @@ type GistDependencyManagerProvider(outputDir: string option) =
         let gists =
             packageManagerTextLines
             |> Seq.choose (fun line ->
-                let id, revision, files, token =
-                    Github.extractOptionsFromString line
+                let id, revision, files, token = Github.extractOptionsFromString line
 
                 match id with
                 | None ->
@@ -126,8 +121,7 @@ type GistDependencyManagerProvider(outputDir: string option) =
             |> Seq.map (fun (gist, gistFiles, errors, revision) ->
                 let revision = defaultArg revision "default"
 
-                let directory =
-                    Path.Combine(outDir, gist.id, revision)
+                let directory = Path.Combine(outDir, gist.id, revision)
                 Logger.log $"Gist contents available under {directory}"
 
                 Directory.CreateDirectory(directory) |> ignore
@@ -138,8 +132,7 @@ type GistDependencyManagerProvider(outputDir: string option) =
                     | FetchGistError.GithubError statusCode ->
                         Logger.error $"Failed to fetch files from gist, github sent us code %A{statusCode}"
                     | FetchGistError.SerializationError err ->
-                        let title =
-                            $"Serialization error for Gist: {gist.id}"
+                        let title = $"Serialization error for Gist: {gist.id}"
 
                         let body =
                             $"## Please fill any missing information\n### Automated bug Info:\nFailed to deserialize\n```{err}```\nGistUrl:{gist.url}"
@@ -153,17 +146,22 @@ type GistDependencyManagerProvider(outputDir: string option) =
                 let paths = ResizeArray()
 
                 for file, content in gistFiles do
-                    let path =
-                        Path.Combine(directory, file.filename)
+                    let path = Path.Combine(directory, file.filename)
 
                     File.WriteAllText(path, content)
                     paths.Add(path)
 
                 paths)
-
+        // only F# files should go here
         let files =
             [ for file in files do
                   yield! file ]
+            |> List.filter (fun file ->
+                match Path.GetExtension(file) with
+                | ".fs"
+                | ".fsx"
+                | ".fsi" -> true
+                | _ -> false)
 
         let stdout, stderr = Logger.getLogs ()
         ResolveDependenciesResult(true, stdout, stderr, List.empty, files, List.empty)
