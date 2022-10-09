@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+<assembly><name>Gist.DependencyManager.Gist</name></assembly>
+<members>
+<member name="P:Gist.DependencyManager.Gist.ResolveDependenciesResult.Success">
+<summary>
+ Succeded?
+</summary>
+</member>
+<member name="P:Gist.DependencyManager.Gist.ResolveDependenciesResult.StdOut">
+<summary>
+ The resolution output log
+</summary>
+</member>
+<member name="P:Gist.DependencyManager.Gist.ResolveDependenciesResult.StdError">
+<summary>
+ The resolution error log (* process stderror *)
+</summary>
+</member>
+<member name="P:Gist.DependencyManager.Gist.ResolveDependenciesResult.SourceFiles">
+<summary>
+ The source code file paths
+</summary>
+</member>
+<member name="P:Gist.DependencyManager.Gist.ResolveDependenciesResult.Roots">
+<summary>
+ The roots to package directories
+</summary>
+</member>
+<member name="P:Gist.DependencyManager.Gist.ResolveDependenciesResult.Resolutions">
+<summary>
+ The resolution paths
+</summary>
+</member>
+<member name="T:Gist.DependencyManager.Gist.ResolveDependenciesResult">
+<summary>
+ The results of ResolveDependencies
+</summary>
+</member>
+<member name="T:Gist.DependencyManager.Gist.Attributes.DependencyManagerAttribute">
+<summary>
+ A marker attribute to tell FCS that this assembly contains a Dependency Manager, or
+ that a class with the attribute is a DependencyManager
+</summary>
+</member>
+</members>
+</doc>
