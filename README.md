@@ -6,8 +6,11 @@ The Gist dependency manager is now half alive until I discover how to properly d
 
 ### Quick And Dirty Test
 
-- `dotnet publish -o dist`
-- `dotnet fsi --compilertool:./dist test.fsx`
+If this is the first time, run:
 
+- `dotnet fsi build.fsx`
 
+after that your project should be within the `dist` directory and can be used as follows
 
+- `dotnet fsi --compilertool:./dist path/to/script.fsx` <- run a script with the dependency manager
+- `dotnet fsi --compilertool:./dist` <- run an fsi session with the dependency manager
