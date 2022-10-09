@@ -1,5 +1,11 @@
-﻿#r "gist: b5d191ea54254fe5c595ec3ccf30c4cc"
-#r "gist: b9e9efa19b7c89700c422c0ee5548edb, dcfe9c3cab02c50e788c94d0581819b884203966"
+﻿#r "gist: b9e9efa19b7c89700c422c0ee5548edb"
 #r "gist: not a gist id, not a revision"
 
+open MyTypes
+open MyFunctions
+let a: MyType = { name = "a" }
+
 printfn "Running Stuff"
+printfn $"MyType %A{a}"
+
+printValue $"{add 123 10}"
